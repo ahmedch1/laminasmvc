@@ -1,24 +1,36 @@
 <?php
+
 namespace Album\Controller;
 
+use Album\Model\AlbumTable;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 
 class AlbumController extends AbstractActionController
 {
-public function indexAction()
-{
-}
+    private $table;
 
-public function addAction()
-{
-}
+    public function __construct(AlbumTable $table)
+    {
+        $this->table = $table;
+    }
 
-public function editAction()
-{
-}
+    public function indexAction()
+    {
+        return new ViewModel([
+            'albums' => $this->table->fetchAll(),
+        ]);
+    }
 
-public function deleteAction()
-{
-}
+    public function addAction()
+    {
+    }
+
+    public function editAction()
+    {
+    }
+
+    public function deleteAction()
+    {
+    }
 }
