@@ -20,9 +20,19 @@ class AlbumController extends AbstractActionController
 
     public function indexAction()
     {
-        return new ViewModel([
-            'albums' => $this->table->fetchAll(),
-        ]);
+        // Grab the paginator from the AlbumTable:
+        $paginator = $this->table->fetchAll(true);
+
+        // Set the current page to what has been passed in query string,
+        // or to 1 if none is set, or the page is invalid:
+        $page = (int)$this->params()->fromQuery('page', 1);
+        $page = ($page < 1) ? 1 : $page;
+        $paginator->setCurrentPageNumber($page);
+
+        // Set the number of items per page to 10:
+        $paginator->setItemCountPerPage(10);
+
+        return new ViewModel(['paginator' => $paginator]);
     }
 
     public function addAction()
@@ -92,7 +102,7 @@ class AlbumController extends AbstractActionController
 
     public function deleteAction()
     {
-        $id = (int) $this->params()->fromRoute('id', 0);
+        $id = (int)$this->params()->fromRoute('id', 0);
         if (!$id) {
             return $this->redirect()->toRoute('album');
         }
@@ -102,7 +112,7 @@ class AlbumController extends AbstractActionController
             $del = $request->getPost('del', 'No');
 
             if ($del == 'Yes') {
-                $id = (int) $request->getPost('id');
+                $id = (int)$request->getPost('id');
                 $this->table->deleteAlbum($id);
             }
 
@@ -111,7 +121,7 @@ class AlbumController extends AbstractActionController
         }
 
         return [
-            'id'    => $id,
+            'id' => $id,
             'album' => $this->table->getAlbum($id),
         ];
     }
