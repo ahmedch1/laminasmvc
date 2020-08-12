@@ -10,45 +10,63 @@ return [
     'service_manager' => [
         'aliases' => [
             Model\PostRepositoryInterface::class => Model\LaminasDbSqlRepository::class,
+            Model\PostCommandInterface::class => Model\LaminasDbSqlCommand::class,
+
         ],
         'factories' => [
             Model\PostRepository::class => InvokableFactory::class,
             Model\LaminasDbSqlRepository::class => Factory\LaminasDbSqlRepositoryFactory::class,
+            Model\PostCommand::class => InvokableFactory::class,
+            Model\LaminasDbSqlCommand::class => Factory\LaminasDbSqlCommandFactory::class,
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\ListController::class => Factory\ListControllerFactory::class,
+            Controller\WriteController::class => Factory\WriteControllerFactory::class,
         ],
     ],
-    'router'          => [
+    'router' => [
         'routes' => [
             'blog' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/blog',
+                    'route' => '/blog',
                     'defaults' => [
                         'controller' => Controller\ListController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
                 'may_terminate' => true,
-                'child_routes'  => [
+                'child_routes' => [
                     'detail' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/:id',
+                            'route' => '/:id',
                             'defaults' => [
                                 'action' => 'detail',
                             ],
                             'constraints' => [
-                                'id' => '[1-9]\d*',
+                                'id' => '\d+',
+                            ],
+                        ],
+                    ],
+
+                    // Add the following route:
+                    'add' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/add',
+                            'defaults' => [
+                                'controller' => Controller\WriteController::class,
+                                'action' => 'add',
                             ],
                         ],
                     ],
                 ],
             ],
         ],
+
     ],
     'view_manager' => [
         'template_path_stack' => [
